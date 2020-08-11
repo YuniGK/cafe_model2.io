@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<!-- 아이디 조회 -->
+	<select id="member_one" parameterType="String" resultType="vo.MemberVo">
+		select * from c_member where m_id = #{m_id}
+	</select>
+	
+	<!-- 회원 조회 -->
+	<select id="member_one_list" parameterType="int" resultType="vo.MemberVo">
+		select * from c_member where m_idx = #{m_idx}
+	</select>
+	
+	<!-- 회원 리스트 조회 -->
+	<select id="member_list" resultType="vo.MemberVo">
+		<![CDATA[
+		select * 
+		from c_member 
+		where rownum <= 5
+		order by m_regdate desc
+		]]>
+	</select>
+	
+	<!-- 회원 가입 -->
+	<insert id="member_insert" parameterType="vo.MemberVo">
+		insert into c_member values(c_member_seq.nextval, #{m_id}, #{m_pwd}, #{m_name}, #{m_gender}, #{m_tel}, #{m_email}, #{m_photo}, #{m_grade}, #{m_ip}, SYSDATE) 
+	</insert>
+
+	<!-- 회원정보 수정 -->
+	<update id="member_update" parameterType="vo.MemberVo">
+		update c_member 
+		set m_id = #{m_id}, m_pwd = #{m_pwd}, m_name = #{m_name}, m_gender = #{m_gender}, m_tel = #{m_tel}, m_email = #{m_email}, m_photo = #{m_photo}, m_grade = #{m_grade}, m_ip = #{m_ip}, m_regdate = SYSDATE
+		where m_idx = #{m_idx}
+	</update>
+		
+	<!-- 회원 삭제 -->
+	<delete id="member_delete" parameterType="int">
+		delete from c_member where m_idx = #{m_idx}
+	</delete>
+	
+	<!-- 신규회원 -->
+	<select id="today_member" resultType="int">		
+		select nvl(count(m_regdate), 0) from c_member
+		where to_char(m_regdate, 'YYYYMMDD') = to_char(sysdate, 'YYYYMMDD')
+	</select>
+</mapper>

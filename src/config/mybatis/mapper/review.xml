@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="review">
+	<insert id="review_insert" parameterType="vo.ReviewVo">
+		insert into c_review values(c_review_seq.nextval, #{r_cot}, #{m_idx}, #{c_idx}, #{r_grade}, #{r_pwd}, #{r_ip}, SYSDATE)
+	</insert>
+	
+	<select id="review_list" resultType="vo.ReviewVo">
+		<![CDATA[
+		select * 
+		from detail_review_view
+		where rownum <= 5
+		order by r_regdate desc
+		]]>
+	</select>
+	
+	<!-- 내가 쓴 리뷰 -->
+	<select id="my_review_list" resultType="vo.ReviewVo" parameterType="int">
+		select * from detail_review_view 
+		where m_idx = #{m_idx}
+		order by r_regdate desc
+	</select>
+	
+	<!-- ===========================================
+
+	<resultMap type="vo.ReviewVo" id="member_map">
+		<result property="m_idx" column="m_idx" />
+		
+		<collection property="m_one" column="m_idx == m_idx" select="cafe_detail_member" />
+	</resultMap>
+	
+	<select id="cafe_detail_member" resultType="vo.MemberVo">
+		select * from c_member where m_idx = #{m_idx}	
+	</select>
+	
+	<select id="review_list_cafe" resultMap="member_map" parameterType="int">
+		select *
+		from c_review 
+		where c_idx = #{c_idx}
+	</select>
+	
+	=========================================== -->
+	
+	<!-- 카페상세용 조회 -->
+	<select id="review_list_cafe" resultType="vo.ReviewVo" parameterType="int">
+		select * from detail_review_view where c_idx = #{c_idx}
+	</select>
+	
+	<select id="review_avg_grade" resultType="vo.ReviewVo" parameterType="int">
+		select
+			   nvl(avg(case r_grade when 1 then count(*) end), 0) bad,
+			   nvl(avg(case r_grade when 2 then count(*) end), 0) notBad,
+			   nvl(avg(case r_grade when 3 then count(*) end), 0) soso,
+			   nvl(avg(case r_grade when 4 then count(*) end), 0) likes,
+			   nvl(avg(case r_grade when 5 then count(*) end), 0) god
+		from c_review
+		where c_idx = #{c_idx}
+		group by r_grade
+	</select>	
+	
+	<select id="review_total_grade" resultType="vo.ReviewVo" parameterType="int">
+		select count(*) total from c_review where c_idx = #{c_idx}
+	</select>
+	
+	<!-- 삭제 / 업데이트용 조회 -->
+	<select id="review_list_one" resultType="vo.ReviewVo" parameterType="int">
+		select * from c_review where r_idx = #{r_idx}
+	</select>
+	
+	<delete id="review_delete" parameterType="int">
+		delete from c_review where r_idx = #{r_idx}
+	</delete>
+	
+	<update id="review_update" parameterType="vo.ReviewVo">
+		update c_review 
+		set r_cot = #{r_cot}, m_idx = #{m_idx}, c_idx = #{c_idx}, r_grade = #{r_grade}, r_pwd = #{r_pwd}, r_ip =  #{r_ip}, r_regdate = SYSDATE
+		where r_idx = #{r_idx}
+	</update>
+	
+	<!-- 신규글 -->
+	<select id="today_review" resultType="int">		
+		select nvl(count(r_regdate),0) from c_review
+		where to_char(r_regdate, 'YYYYMMDD') = to_char(sysdate, 'YYYYMMDD')
+	</select>
+	
+	<!-- 내가쓴 글 -->
+	<select id="my_review" resultType="int" parameterType="int">		
+		select nvl(count(r_regdate),0) from c_review
+		where m_idx = #{m_idx}
+	</select>
+</mapper>
