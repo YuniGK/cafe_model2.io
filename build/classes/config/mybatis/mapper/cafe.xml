@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cafe">
+	<!-- cafe 등록 -->
+	<insert id="cafe_insert" parameterType="vo.CafeVo">
+		insert into c_cafe values(c_cafe_seq.nextval, #{c_name}, #{c_addr}, #{c_tel}, #{c_price}, 
+								#{c_park}, #{c_time}, #{c_hday}, #{c_uri}, #{c_map}, 
+								#{c_photo}, #{c_menu1}, #{c_menu2}, #{c_menu3}, #{c_menu4}, 
+								#{c_tag})
+	</insert>
+	
+	<!-- =========================================== -->
+	<!-- ② -->
+	<resultMap type="vo.CafeVo" id="review_map">
+		<result property="c_idx" column="c_idx" />
+		
+		<association property="r_one" column="c_idx = c_idx" select="cafe_list_reivew_one" />
+		<!-- <collection property="r_one" column="c_idx = c_idx" select="cafe_list_reivew_one" /> -->
+		<!-- <collection property="h_one" column="c_idx == c_idx" select="cafe_hit_one" /> -->
+	</resultMap>
+	
+	<!-- ④ -->
+	<!--
+	<insert id="cafe_hit_one" parameterType="vo.HitVo">
+		insert into c_hits values(c_member_seq.nextval, 0, #{c_idx})
+	</insert>
+	-->
+	
+	<!-- ③ -->
+	<select id="cafe_list_reivew_one" resultType="vo.ReviewVo">
+			select r.*,
+				(select avg(r_grade) from c_review where c_idx = #{c_idx}) avg
+			from 
+			   (select * from c_review where c_idx = #{c_idx} order by r_grade desc) r
+			where rownum = 1
+	</select>
+	
+	<!-- ① -->
+	<!-- cafe 목록 조회 -->
+	<select id="cafe_list" resultMap="review_map" parameterType="java.util.Map">
+		select a.* from 
+		(
+		   select ROWNUM as RNUM, b.* 
+		   from
+		   ( 
+		       select * from c_cafe
+		         <if test="addrs!=null">
+		               where c_addr like '%' || #{ addrs } || '%' 
+		         </if>
+		       order by c_idx desc
+		    ) b 
+		) a
+		where <![CDATA[ a.RNUM >= (#{page_num}*5)+1 and a.RNUM <= (#{page_num}*5)+5 ]]>
+	</select>
+	
+	<select id="cafe_list_size" resultType="vo.CafeVo" parameterType="String">
+       select * from c_cafe
+         <if test="value!=null and value!=''">
+         	where c_addr like '%' || #{value} || '%' 
+         </if>
+	</select>
+		
+	<!-- =========================================== -->
+	
+	<select id="cafe_list_only" resultType="vo.CafeVo">
+		<![CDATA[
+		select *
+		from c_cafe
+		where rownum <= 6
+		order by c_name
+		]]>
+	</select>
+		
+	<!-- =========================================== -->
+	
+	<!-- cafe 하나만 조회 -->
+	<select id="cafe_one_list" resultType="vo.CafeVo" parameterType="int">
+		select * from c_cafe where c_idx = #{c_idx}
+	</select>
+	
+	<!-- cafe 삭제 -->
+	<delete id="cafe_delete" parameterType="int">
+		delete from c_cafe where c_idx = #{c_idx}
+	</delete>
+	
+	<!-- cafe 수정 -->
+	<update id="cafe_update" parameterType="vo.CafeVo">
+		update c_cafe
+		set  c_name = #{c_name}, c_addr = #{c_addr}, c_tel = #{c_tel}, c_price = #{c_price}, c_park = #{c_park}, 
+			 c_time = #{c_time}, c_hday = #{c_hday}, c_uri = #{c_uri}, c_map = #{c_map}, c_photo = #{c_photo}, 
+			 c_menu1 = #{c_menu1}, c_menu2 = #{c_menu2}, c_menu3 = #{c_menu3}, c_menu4 = #{c_menu4}, c_tag = #{c_tag}
+		where c_idx = #{c_idx}
+	</update>
+	
+	<!-- =========================================== -->
+	<!-- ② -->
+	<resultMap type="vo.CafeVo" id="review_tag_map">
+		<result property="c_idx" column="c_idx" />
+		
+		<collection property="r_one" column="c_idx == c_idx" select="cafe_tag_reivew_one" />
+	</resultMap>
+	
+	<!-- ③ -->
+	<select id="cafe_tag_reivew_one" resultType="vo.ReviewVo">
+			select r.*,
+				(select avg(r_grade) from c_review where c_idx = #{c_idx}) avg
+			from 
+			   (select * from c_review where c_idx = #{c_idx} order by r_grade desc) r
+			where rownum = 1
+	</select>
+	
+	<!-- ① -->
+	<!-- cafe 목록 조회 -->
+	<select id="cafe_tag_list" resultMap="review_tag_map" parameterType="String">
+		select * from c_cafe 
+		where c_tag like '%'||#{c_tag}||'%'
+		order by c_name desc
+	</select>
+	
+	<!-- =========================================== -->
+</mapper>
