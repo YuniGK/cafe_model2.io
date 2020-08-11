@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+/* -- 메인 슬라이드 -- */
+#myCarousel.slide img{width: 100%;}
+
+/* -- 카페 카테고리 -- */
+.cafeCategroy{margin: 120px 0 80px; overflow: hidden; width: 100%;}
+
+.cafeCategroy .title h3,
+.cafeList .title h3{ font-size: 30px;  font-weight: bold; color: black; margin: 0 0 40px}
+
+.cafeCategroy ul{width: 102%;}
+
+.cafeCategroy li{ position: relative; float: left; width: 31.33%; margin:0 2% 2% 0; overflow: hidden;}
+
+.cafeCategroy a{display: block; width: 100%;}	
+
+.cafeCategroy img{width: 100%;}
+
+.cafeCategroy li h3{ width:100%; margin:0; text-align:center; font-size:28px; position: absolute; top:0; padding:50% 10px; box-sizing:border-box; color: #fff; background: rgba(0, 0, 0, .4)}
+.cafeCategroy li:hover h3{-webkit-transition: all 0.25s ease-out; transition: all 0.25s ease-out; background: transparent;}
+	
+/* -- 카페 목록 -- */
+.cafeList .title h3{margin: 120px 0 40px;}
+.cafeList .list{margin: 80px 0; overflow: hidden; width: 100%;}
+
+.cafeList ul{width: 102%;}
+
+.cafeList li{ position: relative; float: left; width: 31.33%; margin:0 2% 80px 0; text-align: center;}
+	
+.cafeList li h5 {font-size: 18px; box-sizing: border-box; padding: 10px 10px 0;}
+
+.cafeList li p {font-size: 14px; box-sizing: border-box; padding: 0 10px;}
+
+.cafeList li a.imgBox{overflow:hidden; width: 100%; display: block;}
+
+.cafeList img{width: 100%;}
+.cafeList li:hover img{transform:scale(1.2); opacity: .7; -webkit-transition: all 0.25s ease-out; transition: all 0.25s ease-out;}

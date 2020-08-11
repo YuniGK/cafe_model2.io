@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+#userJoin .inner-in{margin: auto;}
+
+#userJoin .titleBox{padding: 120px 0 40px;}
+
+#userJoin .profileplace{width: 200px; margin: 40px auto 80px;}
+#userJoin .profileplace img{border-radius: 50%;}
+
+#userJoin .table td .col-sm-8{padding-left: 0;}
+#userJoin .table .btnBox td{padding: 40px 0 0; text-align: center;}
